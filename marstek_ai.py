@@ -57,7 +57,6 @@ NACHT_BASELOAD_KWH = 1.3            # 23:00 - 07:00
 AVOND_BASELOAD_KWH = 2.0            # 17:00 - 23:00
 DAG_BASELOAD_KWH = 0.5              # 07:00 - 17:00
 NACHT_BEHOUD_MARGE_SOC = 10.0
-ZON_DIRECT_VERBRUIK_KWH = 4.5
 
 # Financien, Rendement & Degradatie
 ROUNDTRIP_EFFICIENCY = 0.88
@@ -109,6 +108,7 @@ ENT_MAX_DISCHARGE_POWER = "number.marstek_venus_1_max_discharge_power"
 ENT_NETTO_VERMOGEN_L1 = "sensor.actueel_netto_vermogen_l1"
 ENT_TIBBER_PRICES = "sensor.tibber_kwartierprijzen"
 ENT_ACCU_ONTLAAD_W = "sensor.marstek_venus_system_system_discharge_power"
+ENT_GEMIDDELD_VERBRUIK = "sensor.historisch_dagverbruik"
 
 # Marstek Switches
 ENT_ALLOW_DISCHARGE = "switch.marstek_venus_1_battery_allow_discharge"
@@ -466,14 +466,15 @@ def marstek_ai_bereken_schema():
 
     zon_resterend_kwh = _verwachte_zon_resterend_kwh()
     zon_morgen_kwh = _verwachte_zon_morgen_kwh()
+    historisch_dag_verbruik_kwh = _num(ENT_GEMIDDELD_VERBRUIK, 5.0)
     ruwe_zon = zon_resterend_kwh + zon_morgen_kwh
-    totale_bruikbare_zon = max(0.0, ruwe_zon - ZON_DIRECT_VERBRUIK_KWH)
+    totale_bruikbare_zon = max(0.0, ruwe_zon - historisch_dag_verbruik_kwh)
     zon_soc_pct = (totale_bruikbare_zon / BATTERIJ_CAPACITEIT_KWH) * 100.0 if BATTERIJ_CAPACITEIT_KWH > 0 else 0.0
 
     vloer_soc = _bereken_vloer_soc()
     effectieve_max_soc_nacht = max(vloer_soc, MAX_SOC_HARD - zon_soc_pct)
-
-    ruimte_net_laden_kwh = max(0.0, BATTERIJ_CAPACITEIT_KWH * (effectieve_max_soc_nacht - huidige_soc) / 100.0)
+    if huidige_soc < 30.0:
+        ruimte_net_laden_kwh = BATTERIJ_CAPACITEIT_KWH * (MAX_SOC_HARD - huidige_soc) / 100.0
     kwh_per_kwartier = (MAX_LAAD_W / 1000.0) * 0.25
     nodige_laad_slots = int(math.ceil(ruimte_net_laden_kwh / kwh_per_kwartier)) if kwh_per_kwartier > 0 else 0
     nodige_laad_slots = max(0, min(len(geldige_kwartieren), nodige_laad_slots))
