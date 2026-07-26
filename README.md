@@ -1,7 +1,3 @@
-Hier is een nette, professionele en heldere `README.md` voor je GitHub-repository. Ook al kijkt er misschien nooit iemand naar, een strakke documentatie is altijd fijn als je over een paar maanden zelf wilt weten hoe het ook alweer zat!
-
----
-
 # 🤖 Marstek AI Scheduler for Home Assistant
 
 Een geavanceerd Pyscript-automatiseringstramwerk voor Home Assistant om **Marstek Venus** accusystemen intelligent aan te sturen op basis van dynamische uurtarieven (Tibber), zonne-energieprognoses, thermische opslag (boiler) en netwerkbeveiliging.
