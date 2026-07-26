@@ -47,7 +47,7 @@ SCRIPT_VERSIE = "v10.12"
 
 # Accu Hardware & Limieten
 BATTERIJ_CAPACITEIT_KWH = 5.12
-MAX_LAAD_W = 2500.0
+MAX_LAAD_W = 1250.0
 MAX_ONTLAAD_W = 2500.0
 MIN_SOC_HARD = 12.0
 MAX_SOC_HARD = 95.0
@@ -57,6 +57,7 @@ NACHT_BASELOAD_KWH = 1.3            # 23:00 - 07:00
 AVOND_BASELOAD_KWH = 2.0            # 17:00 - 23:00
 DAG_BASELOAD_KWH = 0.5              # 07:00 - 17:00
 NACHT_BEHOUD_MARGE_SOC = 10.0
+ZON_DIRECT_VERBRUIK_KWH = 4.5
 
 # Financien, Rendement & Degradatie
 ROUNDTRIP_EFFICIENCY = 0.88
@@ -67,7 +68,7 @@ GROOTVERBRUIK_DREMPEL_W = 500.0
 MIN_DISCHARGE_POWER_W = 800.0       # Hardware-minimum Marstek; onder 800W via switch uitschakelen
 
 # Boiler & Climate Control
-BOILER_TEMP_COMFORT = 45.0
+BOILER_TEMP_COMFORT = 42.0
 BOILER_TEMP_LEGIONELLA = 62.0
 BOILER_TEMP_MAX_DUMP = 71.0
 MAX_PRIJS_BOILER_EUR = 0.25
@@ -75,7 +76,7 @@ MIN_PRIJS_BOILER_VERWARMEN = 0.10   # onder deze prijs mag comfort-verwarming
 LEGIONELLA_INTERVAL_UUR = 168
 ZONNE_DUMP_OVERSCHOT_W = 1800.0
 ZONNE_DUMP_AFVAL_W = 1500.0
-BOILER_TEMP_NOOD_ONDER = 38.0
+BOILER_TEMP_NOOD_ONDER = 34.0
 
 # Boiler Slimme Stekker (LSC)
 BOILER_VERMOGEN_W = 1815.0          # Vast vermogen van de LSC boiler stekker
@@ -465,7 +466,8 @@ def marstek_ai_bereken_schema():
 
     zon_resterend_kwh = _verwachte_zon_resterend_kwh()
     zon_morgen_kwh = _verwachte_zon_morgen_kwh()
-    totale_bruikbare_zon = (zon_resterend_kwh + zon_morgen_kwh) * 0.70
+    ruwe_zon = zon_resterend_kwh + zon_morgen_kwh
+    totale_bruikbare_zon = max(0.0, ruwe_zon - ZON_DIRECT_VERBRUIK_KWH)
     zon_soc_pct = (totale_bruikbare_zon / BATTERIJ_CAPACITEIT_KWH) * 100.0 if BATTERIJ_CAPACITEIT_KWH > 0 else 0.0
 
     vloer_soc = _bereken_vloer_soc()
