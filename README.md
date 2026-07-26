@@ -1,6 +1,6 @@
 # 🤖 Marstek AI Scheduler for Home Assistant
 
-Een geavanceerd Pyscript-automatiseringstramwerk voor Home Assistant om **Marstek Venus** accusystemen intelligent aan te sturen op basis van dynamische uurtarieven (Tibber), zonne-energieprognoses, thermische opslag (boiler) en netwerkbeveiliging.
+Een geavanceerd Pyscript-automatiseringstraamwerk voor Home Assistant om **Marstek Venus** accusystemen intelligent aan te sturen op basis van dynamische uurtarieven (Tibber), zonne-energieprognoses, thermische opslag (boiler) en netwerkbeveiliging.
 
 ---
 
